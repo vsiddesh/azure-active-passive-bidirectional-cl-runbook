@@ -130,15 +130,15 @@ confluent kafka acl create --allow --service-account {{destination_service_accou
 ![Alt text](./img/failover.png)
 
 #### 10. Start the network connection back
+NOTE: If you are running terraform code from your local machine comment out proxy_public_ip <CC_PRIMARY_BOOTSTRAP_URL> from /etc/hosts file to avoid terraform connectivity issues from local laptop to confluent cloud.
 ```bash
 terraform apply -var="cc_failover_primary=false"
-NOTE: If you are running terraform code from your local machine comment out proxy_public_ip <CC_PRIMARY_BOOTSTRAP_URL> from /etc/hosts file to avoid terraform connectivity issues from local laptop to confluent cloud.
 ```
 
 #### 11. Check the secondary to primary mirroring on primary mirror topic
 NOTE: Once above terraform command is completed uncomment proxy_public_ip <CC_PRIMARY_BOOTSTRAP_URL> from /etc/hosts file to use the proxy for connecting to confluent cloud primary cluster.
+Get auth_src_cl value from echo "{{src_cluster_api_key}}:{{src_cluster_api_secret}}" | base64
 ```bash
-Note: Get auth_src_cl value from echo "{{src_cluster_api_key}}:{{src_cluster_api_secret}}" | base64
 curl -X GET 'https://{{src_cluster_bootstrap}}/kafka/v3/clusters/{{src_cluster_id}}/links/{{src_cl_link_name}}/mirrors' --header 'Authorization: Basic {{auth_src_cl}}' --header 'Accept: */*'
 ```
 
